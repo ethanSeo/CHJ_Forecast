@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[115]:
+# In[1]:
 
 import requests
 import re
@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-# In[116]:
+# In[2]:
 
 # Current Temperature
 w_now = "https://api2.sktelecom.com/weather/current/minutely?ver=1&lat=36.5038&lon=127.4166&appKey=84ccae67-8c6b-4269-8b4d-9131c5eae607"
@@ -20,7 +20,7 @@ NOW_Temp = float(resp["weather"]["minutely"][0]["temperature"]["tc"])
 NOW_Time = resp["weather"]["minutely"][0]["timeObservation"]
 
 
-# In[117]:
+# In[3]:
 
 # 10-Days Temperature Forecast
 weather10 = "https://api2.sktelecom.com/weather/forecast/6days?ver=1&lat=36.5038&lon=127.4166&appKey=84ccae67-8c6b-4269-8b4d-9131c5eae607"
@@ -65,7 +65,7 @@ print("Max: ", item[1], len(item[1]))
 print("Min: ", item[0], len(item[0]))
 
 
-# In[118]:
+# In[4]:
 
 # 3-Days Temperature Forecast
 weather3 = "https://api2.sktelecom.com/weather/forecast/3days?ver=1&lat=36.5038&lon=127.4166&appKey=84ccae67-8c6b-4269-8b4d-9131c5eae607"
@@ -115,7 +115,7 @@ print("Index: ", ind3, len(ind3))
 print("Temp: ", item3, len(item3))
 
 
-# In[119]:
+# In[5]:
 
 # Draw Graph
 plt.figure(figsize=(10,10))
@@ -156,10 +156,5 @@ plt.suptitle('Powered by SK Telecom Weather API', color='#fc5f10')
 plt.tight_layout(pad=4, w_pad=1, h_pad=2)
 
 plt.savefig('Forecast_{0}.png'.format(time))
-plt.show()
-
-
-# In[ ]:
-
-
+# plt.show()
 
