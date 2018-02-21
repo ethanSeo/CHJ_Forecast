@@ -122,12 +122,12 @@ plt.figure(figsize=(10,10))
 
 # First Graph
 plt.subplot(211)
-plt.title('Cheongju 50+ Hour Forecast: <{0}>'.format(time), fontweight='bold', fontsize='x-large')
+plt.title('청주공장 향후 50 시간 예상 기온: <{0}>'.format(time), fontweight='bold', fontsize='x-large')
 lowest = min(item3)
 plt.plot(ind3, item3, "#617bfb", label='3 Day Minimum: ({0}\u2103)'.format(lowest), linewidth=3)
 plt.legend(shadow=True)
-plt.xlabel("# of Hours Passed", fontsize='large', fontweight='bold')
-plt.ylabel("Temperature(\u2103)", fontsize='large', fontweight='bold')
+plt.xlabel("#시간 이후", fontsize='large', fontweight='bold')
+plt.ylabel("기온(\u2103)", fontsize='large', fontweight='bold')
 plt.xlim(-6, ind3[count]) # x-axis min/max limits
 plt.xticks(np.arange(0, ind3[count]+6, 6), fontsize='large')
 plt.yticks(fontsize='large')
@@ -139,22 +139,22 @@ plt.text(-2, NOW_Temp-2, "NOW\n{0}".format(NOW_Time[11:16]), color='#ff4253', fo
 
 # Second Graph
 plt.subplot(212)
-plt.title('Cheongju 10 Day Forecast: <{0}>'.format(time0), fontweight='bold', fontsize='x-large')
+plt.title('청주공장 향후 10일 예상 기온: <{0}>'.format(time0), fontweight='bold', fontsize='x-large')
 maximum = max(item[1])
 minimum = min(item[0])
 plt.plot(ind[1], item[1], '#f86586', label='Temp Max({0}\u2103)'.format(maximum), linewidth=3)
 plt.plot(ind[0], item[0], "#617bfb", label='Temp Min({0}\u2103)'.format(minimum), linewidth=3)
 plt.legend(shadow=True)
-plt.xlabel("# of Days Passed", fontsize='large', fontweight='bold')
-plt.ylabel("Temperature(\u2103)", fontsize='large', fontweight='bold')
+plt.xlabel("#일 이후", fontsize='large', fontweight='bold')
+plt.ylabel("기온(\u2103)", fontsize='large', fontweight='bold')
 plt.xticks(np.arange(2, 11), fontsize='large')
 plt.yticks(fontsize='large')
 
-plt.suptitle('Powered by SK Telecom Weather API', color='#fc5f10')
+plt.suptitle('정보 제공: SK 텔레콤 날씨 API', color='#fc5f10')
 
 #padding
 plt.tight_layout(pad=4, w_pad=1, h_pad=2)
 
-plt.savefig('Forecast_{0}_{1}.png'.format(time[0:10], time[11:13]), dpi=100)
+plt.savefig('KOR_Forecast_{0}_{1}.png'.format(time[0:10], time[11:13]), dpi=100)
 # plt.show()
 
