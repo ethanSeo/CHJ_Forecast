@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[35]:
+# In[44]:
 
 import requests
 import re
@@ -10,7 +10,7 @@ import json
 import numpy as np
 
 
-# In[36]:
+# In[45]:
 
 # Current Temperature
 w_now = "https://api2.sktelecom.com/weather/current/minutely?ver=1&lat=36.5038&lon=127.4166&appKey=84ccae67-8c6b-4269-8b4d-9131c5eae607"
@@ -19,7 +19,7 @@ NOW_Temp = float(resp["weather"]["minutely"][0]["temperature"]["tc"])
 NOW_Time = resp["weather"]["minutely"][0]["timeObservation"]
 
 
-# In[37]:
+# In[46]:
 
 # 10-Days Temperature Forecast
 weather10 = "https://api2.sktelecom.com/weather/forecast/6days?ver=1&lat=36.5038&lon=127.4166&appKey=84ccae67-8c6b-4269-8b4d-9131c5eae607"
@@ -65,7 +65,7 @@ print("Max: ", item[1], len(item[1]))
 print("Min: ", item[0], len(item[0]))
 
 
-# In[38]:
+# In[54]:
 
 # 3-Days Temperature Forecast
 weather3 = "https://api2.sktelecom.com/weather/forecast/3days?ver=1&lat=36.5038&lon=127.4166&appKey=84ccae67-8c6b-4269-8b4d-9131c5eae607"
@@ -100,7 +100,7 @@ for i in range(len(result3)):
         else:
             j=0
             # this sorts everything, even if the returned json is unsorted
-            while hour > ind3[j]:
+            while j<len(ind3) and hour > ind3[j]:
                 j+=1
             # insert the hour/temp value at the right position
             ind3.insert(j, hour)
@@ -115,7 +115,7 @@ print("Index: ", ind3, len(ind3))
 print("Temp: ", item3, len(item3))
 
 
-# In[39]:
+# In[48]:
 
 # For keeping track of the dates and week-days/ends
 import datetime as dt
@@ -134,12 +134,12 @@ elif start is 2:
     mark = mark[2:]
 
 
-# In[40]:
+# In[49]:
 
 mark
 
 
-# In[41]:
+# In[50]:
 
 # Draw Graph
 import matplotlib.pyplot as plt
@@ -206,12 +206,12 @@ plt.suptitle('Powered by SK Telecom Weather API', color='#fc5f10')
 plt.tight_layout(pad=4, w_pad=1, h_pad=2)
 
 
-# In[42]:
+# In[51]:
 
 # plt.show()
 
 
-# In[43]:
+# In[52]:
 
 plt.savefig('Forecast_{0}_{1}.png'.format(time[0:10], time[11:13]), dpi=100)
 # plt.show()
