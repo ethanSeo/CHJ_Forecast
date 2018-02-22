@@ -147,7 +147,7 @@ plt.figure(figsize=(10,10))
 
 # First Graph
 plt.subplot(211)
-plt.title('Cheongju 50+ Hour Forecast: <{0}>'.format(time), fontweight='bold', fontsize='x-large')
+plt.title('Cheongju 3 Day Forecast: <{0}>'.format(time), fontweight='bold', fontsize='x-large')
 lowest = min(item3)
 plt.plot(ind3, item3, "#617bfb", label='3 Day Minimum: ({0}\u2103)'.format(lowest), linewidth=3)
 plt.legend(shadow=True)
