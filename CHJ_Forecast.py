@@ -1,17 +1,16 @@
 
 # coding: utf-8
 
-# In[6]:
+# In[35]:
 
 import requests
 import re
 from collections import OrderedDict
 import json
-import matplotlib.pyplot as plt
 import numpy as np
 
 
-# In[7]:
+# In[36]:
 
 # Current Temperature
 w_now = "https://api2.sktelecom.com/weather/current/minutely?ver=1&lat=36.5038&lon=127.4166&appKey=84ccae67-8c6b-4269-8b4d-9131c5eae607"
@@ -20,7 +19,7 @@ NOW_Temp = float(resp["weather"]["minutely"][0]["temperature"]["tc"])
 NOW_Time = resp["weather"]["minutely"][0]["timeObservation"]
 
 
-# In[8]:
+# In[37]:
 
 # 10-Days Temperature Forecast
 weather10 = "https://api2.sktelecom.com/weather/forecast/6days?ver=1&lat=36.5038&lon=127.4166&appKey=84ccae67-8c6b-4269-8b4d-9131c5eae607"
@@ -45,27 +44,28 @@ for i in range(len(r)):
     pattern = re.compile(r'\d+')
     key = it[0]
     search = pattern.search(key)
-    hour = int(search.group(0))
+    numD = int(search.group(0))
     temp = int(it[1])
     
     # Max of Min determinant i.e "tmin2day" or "tmax2day"  
     p = 0 if key[2] is 'i' else 1
 
     if len(ind[p]) is 0:
-        ind[p].append(hour)
+        ind[p].append(numD)
         item[p].append(temp)
     else:
         j=0
-        while j<8 and hour > ind[p][j]:
+        while j<8 and numD > ind[p][j]:
             j+=1
-        ind[p].insert(j, hour)
+        ind[p].insert(j, numD)
         item[p].insert(j, temp)
 
+print("DAY: ", ind)
 print("Max: ", item[1], len(item[1]))
 print("Min: ", item[0], len(item[0]))
 
 
-# In[9]:
+# In[38]:
 
 # 3-Days Temperature Forecast
 weather3 = "https://api2.sktelecom.com/weather/forecast/3days?ver=1&lat=36.5038&lon=127.4166&appKey=84ccae67-8c6b-4269-8b4d-9131c5eae607"
@@ -115,9 +115,34 @@ print("Index: ", ind3, len(ind3))
 print("Temp: ", item3, len(item3))
 
 
-# In[10]:
+# In[39]:
+
+# For keeping track of the dates and week-days/ends
+import datetime as dt
+recordedTime = int(time[11:13])
+mark=[6, 18, 6+24, 18+24, 6+48, 18+48]
+start=0
+for i in range(6):
+    mark[i]-=recordedTime
+    if mark[i] < 0:
+        start+=1
+
+if start is 1:
+    mark = mark[1:]
+    mark.insert(0, 0)
+elif start is 2:
+    mark = mark[2:]
+
+
+# In[40]:
+
+mark
+
+
+# In[41]:
 
 # Draw Graph
+import matplotlib.pyplot as plt
 plt.figure(figsize=(10,10))
 
 # First Graph
@@ -133,6 +158,23 @@ plt.xticks(np.arange(0, ind3[count]+6, 6), fontsize='large')
 plt.yticks(fontsize='large')
 plt.grid(linestyle='--')
 
+# Mark area 6:00 - 18:00 for every date presented on the graph.
+today = dt.date.today()
+markingdays = int(len(mark))
+addedDays=1 if markingdays is 4 else 0 # if the recorded time is 20:00 or beyond, must add 1 more day
+
+for i in range(0, markingdays, 2):
+    deltaT = dt.timedelta(addedDays+i/2)
+    Day = today+deltaT
+    WeekNo = Day.weekday() # weekday() -> returns day number 0~6, 0 being Monday and 6 being Sunday
+    dayColor='#ff4253' if WeekNo >= 5 else 'teal' # if weekday->green, if weekend->scarlet
+  
+    plt.axvspan(mark[i], mark[i+1], facecolor=dayColor, alpha=0.2) #
+    DATE = str(Day)[5:]
+    # x-pos, y-pos, Date in string, other parameters...
+    plt.text((mark[i]+mark[i+1])/2, min(lowest, NOW_Temp), DATE, horizontalalignment='center', fontweight='bold', color=dayColor)
+    
+
 # Annotate "NOW"
 plt.plot(0, NOW_Temp, 'o', color='#ff4253')
 plt.text(-2, NOW_Temp-2, "NOW\n{0}".format(NOW_Time[11:16]), color='#ff4253', fontweight='bold')
@@ -142,18 +184,34 @@ plt.subplot(212)
 plt.title('Cheongju 10 Day Forecast: <{0}>'.format(time0), fontweight='bold', fontsize='x-large')
 maximum = max(item[1])
 minimum = min(item[0])
-plt.plot(ind[1], item[1], '#f86586', label='Temp Max({0}\u2103)'.format(maximum), linewidth=3)
-plt.plot(ind[0], item[0], "#617bfb", label='Temp Min({0}\u2103)'.format(minimum), linewidth=3)
+
+tenDay=[]
+today=dt.date.today()
+deltaT = 3
+for i in range(8):
+    tenDay.append(str(today+dt.timedelta(deltaT+i))[5:])
+
+
+plt.plot(tenDay, item[1][1:], '#f86586', label='Temp Max({0}\u2103)'.format(maximum), linewidth=3)
+plt.plot(tenDay, item[0][1:], "#617bfb", label='Temp Min({0}\u2103)'.format(minimum), linewidth=3)
 plt.legend(shadow=True)
 plt.xlabel("# of Days Passed", fontsize='large', fontweight='bold')
 plt.ylabel("Temperature(\u2103)", fontsize='large', fontweight='bold')
-plt.xticks(np.arange(2, 11), fontsize='large')
+plt.xticks(fontsize='large')
 plt.yticks(fontsize='large')
 
 plt.suptitle('Powered by SK Telecom Weather API', color='#fc5f10')
 
 #padding
 plt.tight_layout(pad=4, w_pad=1, h_pad=2)
+
+
+# In[42]:
+
+# plt.show()
+
+
+# In[43]:
 
 plt.savefig('Forecast_{0}_{1}.png'.format(time[0:10], time[11:13]), dpi=100)
 # plt.show()
