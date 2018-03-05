@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[10]:
+# In[1]:
 
 import requests
 import re
@@ -10,7 +10,7 @@ import json
 import numpy as np
 
 
-# In[11]:
+# In[2]:
 
 # Current Temperature
 w_now = "https://api2.sktelecom.com/weather/current/minutely?ver=1&lat=36.5038&lon=127.4166&appKey=84ccae67-8c6b-4269-8b4d-9131c5eae607"
@@ -19,7 +19,7 @@ NOW_Temp = float(resp["weather"]["minutely"][0]["temperature"]["tc"])
 NOW_Time = resp["weather"]["minutely"][0]["timeObservation"]
 
 
-# In[12]:
+# In[3]:
 
 # 10-Days Temperature Forecast
 weather10 = "https://api2.sktelecom.com/weather/forecast/6days?ver=1&lat=36.5038&lon=127.4166&appKey=84ccae67-8c6b-4269-8b4d-9131c5eae607"
@@ -60,18 +60,19 @@ for i in range(len(r)):
         ind[p].insert(j, numD)
         item[p].insert(j, temp)
 
-print("DAY: ", ind)
-print("Max: ", item[1], len(item[1]))
-print("Min: ", item[0], len(item[0]))
+print("-----10 Day-----")
+print("Max: ", item[1][1:], len(item[1]))
+print("Min: ", item[0][1:], len(item[0]))
 
 
-# In[13]:
+# In[4]:
 
 # 3-Days Temperature Forecast
 weather3 = "https://api2.sktelecom.com/weather/forecast/3days?ver=1&lat=36.5038&lon=127.4166&appKey=84ccae67-8c6b-4269-8b4d-9131c5eae607"
 response3 = requests.get(weather3).json()
 result3 = response3["weather"]["forecast3days"][0]["fcst3hour"]["temperature"]
 res3_hum = response3["weather"]["forecast3days"][0]["fcst3hour"]["humidity"]
+res3_pre = response3["weather"]["forecast3days"][0]["fcst3hour"]["precipitation"]
 time = response3["weather"]["forecast3days"][0]["timeRelease"]
 
 item3=[] #Temperature List
@@ -80,6 +81,8 @@ count=0 #count the number of elements
 itemH=[]
 indH=[]
 countH=0
+itemP=[]
+indP=[]
 
 for i in range(len(result3)):
     it = result3.popitem()
@@ -148,14 +151,47 @@ for i in range(len(res3_hum)):
     # if the Value is an Empty String, just skip
     else:
         continue
+        
+# for i in range(len(res3_hum)):
+#     it = res3_hum.popitem()
+    
+#     # KEY
+#     key = it[0]
+#     pattern = re.compile(r'\d+')
+#     search = pattern.search(key)
+    
+#     # HOUR
+#     hour = int(search.group(0))
+    
+#     # if the VALUE is not an Empty String
+#     if it[1] is not '':
+#         hum = float(it[1])
+#         # if the INDEX List is empty, just append the hour&temp to the correct list
+#         if len(indH) is 0:
+#             indH.append(hour)
+#             itemH.append(hum)
+#             # don't increment count here. 
+#         # if the INDEX List is not empty, maneuver the sorted list to find the correct position(j)
+#         else:
+#             j=0
+#             # this sorts everything, even if the returned json is unsorted
+#             while j<len(indH) and hour > indH[j]:
+#                 j+=1
+#             # insert the hour/temp value at the right position
+#             indH.insert(j, hour)
+#             itemH.insert(j, hum)
+#             countH+=1 #start incrementing count from here.
+            
+#     # if the Value is an Empty String, just skip
+#     else:
+#         continue
 
-print("Index: ", ind3, len(ind3))
+print("-----3 Day-----")
 print("Temp: ", item3, len(item3))
-print("IndexH: ", indH, len(indH))
-print("Hum: ", itemH, len(itemH))
+print("Hum: ", itemH, len(itemH), '\n')
 
 
-# In[14]:
+# In[5]:
 
 # For keeping track of the dates and week-days/ends
 import datetime as dt
@@ -174,7 +210,7 @@ elif start is 2:
     mark = mark[2:]
 
 
-# In[15]:
+# In[6]:
 
 # Humidity
 hourly = "https://api2.sktelecom.com/weather/current/hourly?ver=1&lat=36.5038&lon=127.4166&appKey=84ccae67-8c6b-4269-8b4d-9131c5eae607"
@@ -183,7 +219,7 @@ res_hum = res_hourly["weather"]["hourly"][0]["humidity"]
 NOW_Hum = float(res_hum)
 
 
-# In[16]:
+# In[7]:
 
 # Draw Graph
 import matplotlib.pyplot as plt
@@ -259,7 +295,7 @@ plt.suptitle('Powered by SK Telecom Weather API', color='#fc5f10')
 plt.tight_layout(pad=4, w_pad=1, h_pad=2)
 
 
-# In[17]:
+# In[8]:
 
 plt.savefig('Forecast_{0}_{1}.png'.format(time[0:10], time[11:13]), dpi=100)
 plt.show()
