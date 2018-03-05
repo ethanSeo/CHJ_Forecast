@@ -1,3 +1,8 @@
+//red: Vcc
+//black: Gnd
+//white: clock
+//green: data
+
 #include <SHT1x.h>
 
 #define dataPin 10
