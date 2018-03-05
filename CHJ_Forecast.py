@@ -182,14 +182,6 @@ for i in range(len(res3_hum)):
 #     else:
 #         continue
 
-print("-----3 Day-----")
-print("Temp: ", item3, len(item3))
-print("Hum: ", itemH, len(itemH), '\n')
-
-print("-----10 Day-----")
-print("Max: ", item[1][1:], len(item[1])) # From the 3rd day
-print("Min: ", item[0][1:], len(item[0]), '\n')
-
 
 # In[5]:
 
@@ -220,6 +212,21 @@ NOW_Hum = float(res_hum)
 
 
 # In[7]:
+
+print("-----NOW-----")
+print("NOW_TEMP: ", NOW_Temp, '\u2103')
+print("NOW_HUM: ", NOW_Hum, "%\n")
+
+print("-----3 Day-----")
+print("Temp: ", item3, len(item3))
+print("Hum: ", itemH, len(itemH), '\n')
+
+print("-----10 Day-----")
+print("Max: ", item[1][1:], len(item[1])) # From the 3rd day
+print("Min: ", item[0][1:], len(item[0]), '\n')
+
+
+# In[8]:
 
 # Draw Graph
 import matplotlib.pyplot as plt
@@ -295,7 +302,7 @@ plt.suptitle('Powered by SK Telecom Weather API', color='#fc5f10')
 plt.tight_layout(pad=4, w_pad=1, h_pad=2)
 
 
-# In[8]:
+# In[9]:
 
 plt.savefig('Forecast_{0}_{1}.png'.format(time[0:10], time[11:13]), dpi=100)
 plt.show()
