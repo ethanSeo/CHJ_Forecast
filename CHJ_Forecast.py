@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[1]:
+# In[31]:
 
 import requests
 import re
@@ -10,16 +10,7 @@ import json
 import numpy as np
 
 
-# In[2]:
-
-# Current Temperature
-w_now = "https://api2.sktelecom.com/weather/current/minutely?ver=1&lat=36.5038&lon=127.4166&appKey=84ccae67-8c6b-4269-8b4d-9131c5eae607"
-resp = requests.get(w_now).json()
-NOW_Temp = float(resp["weather"]["minutely"][0]["temperature"]["tc"])
-NOW_Time = resp["weather"]["minutely"][0]["timeObservation"]
-
-
-# In[3]:
+# In[32]:
 
 # 10-Days Temperature Forecast
 weather10 = "https://api2.sktelecom.com/weather/forecast/6days?ver=1&lat=36.5038&lon=127.4166&appKey=84ccae67-8c6b-4269-8b4d-9131c5eae607"
@@ -29,7 +20,7 @@ time0 = response["weather"]["forecast6days"][0]["timeRelease"]
 
 # determinant (Max or Min)
 p=-1
-# 2D lists
+
 item=[[],[]] #Min&Max Temperature Lists
 ind=[[],[]]  #INDEX Lists
 
@@ -61,7 +52,7 @@ for i in range(len(r)):
         item[p].insert(j, temp)
 
 
-# In[4]:
+# In[33]:
 
 # 3-Days Temperature Forecast
 weather3 = "https://api2.sktelecom.com/weather/forecast/3days?ver=1&lat=36.5038&lon=127.4166&appKey=84ccae67-8c6b-4269-8b4d-9131c5eae607"
@@ -77,9 +68,8 @@ count=0 #count the number of elements
 itemH=[]
 indH=[]
 countH=0
-# itemP=[]
-# indP=[]
 
+# 3 Day Temperature
 for i in range(len(result3)):
     it = result3.popitem()
     
@@ -113,7 +103,8 @@ for i in range(len(result3)):
     # if the Value is an Empty String, just skip
     else:
         continue
-        
+
+# 3 Day Humidity
 for i in range(len(res3_hum)):
     it = res3_hum.popitem()
     
@@ -147,43 +138,9 @@ for i in range(len(res3_hum)):
     # if the Value is an Empty String, just skip
     else:
         continue
-        
-# for i in range(len(res3_hum)):
-#     it = res3_hum.popitem()
-    
-#     # KEY
-#     key = it[0]
-#     pattern = re.compile(r'\d+')
-#     search = pattern.search(key)
-    
-#     # HOUR
-#     hour = int(search.group(0))
-    
-#     # if the VALUE is not an Empty String
-#     if it[1] is not '':
-#         hum = float(it[1])
-#         # if the INDEX List is empty, just append the hour&temp to the correct list
-#         if len(indH) is 0:
-#             indH.append(hour)
-#             itemH.append(hum)
-#             # don't increment count here. 
-#         # if the INDEX List is not empty, maneuver the sorted list to find the correct position(j)
-#         else:
-#             j=0
-#             # this sorts everything, even if the returned json is unsorted
-#             while j<len(indH) and hour > indH[j]:
-#                 j+=1
-#             # insert the hour/temp value at the right position
-#             indH.insert(j, hour)
-#             itemH.insert(j, hum)
-#             countH+=1 #start incrementing count from here.
-            
-#     # if the Value is an Empty String, just skip
-#     else:
-#         continue
 
 
-# In[5]:
+# In[34]:
 
 # For keeping track of the dates and week-days/ends
 import datetime as dt
@@ -202,16 +159,21 @@ elif start is 2:
     mark = mark[2:]
 
 
-# In[6]:
+# In[35]:
 
-# Humidity
+# Current Temperature
+minutely = "https://api2.sktelecom.com/weather/current/minutely?ver=1&lat=36.5038&lon=127.4166&appKey=84ccae67-8c6b-4269-8b4d-9131c5eae607"
+resp = requests.get(minutely).json()
+NOW_Temp = float(resp["weather"]["minutely"][0]["temperature"]["tc"])
+NOW_Time = resp["weather"]["minutely"][0]["timeObservation"]
+
+# Current Humidity
 hourly = "https://api2.sktelecom.com/weather/current/hourly?ver=1&lat=36.5038&lon=127.4166&appKey=84ccae67-8c6b-4269-8b4d-9131c5eae607"
 res_hourly = requests.get(hourly).json()
-res_hum = res_hourly["weather"]["hourly"][0]["humidity"]
-NOW_Hum = float(res_hum)
+NOW_Hum = float(res_hourly["weather"]["hourly"][0]["humidity"])
 
 
-# In[7]:
+# In[36]:
 
 print("-----NOW-----")
 print("NOW_TEMP: ", NOW_Temp, '\u2103')
@@ -226,7 +188,7 @@ print("Max: ", item[1][1:], len(item[1])) # From the 3rd day
 print("Min: ", item[0][1:], len(item[0]), '\n')
 
 
-# In[8]:
+# In[37]:
 
 # Draw Graph
 import matplotlib.pyplot as plt
@@ -298,11 +260,11 @@ plt.yticks(fontsize='large')
 
 plt.suptitle('Powered by SK Telecom Weather API', color='#fc5f10')
 
-#padding
+# padding
 plt.tight_layout(pad=4, w_pad=1, h_pad=2)
 
 
-# In[9]:
+# In[38]:
 
 plt.savefig('Forecast_{0}_{1}.png'.format(time[0:10], time[11:13]), dpi=100)
 plt.show()
