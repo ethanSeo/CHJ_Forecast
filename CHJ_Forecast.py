@@ -60,10 +60,6 @@ for i in range(len(r)):
         ind[p].insert(j, numD)
         item[p].insert(j, temp)
 
-print("-----10 Day-----")
-print("Max: ", item[1][1:], len(item[1]))
-print("Min: ", item[0][1:], len(item[0]))
-
 
 # In[4]:
 
@@ -81,8 +77,8 @@ count=0 #count the number of elements
 itemH=[]
 indH=[]
 countH=0
-itemP=[]
-indP=[]
+# itemP=[]
+# indP=[]
 
 for i in range(len(result3)):
     it = result3.popitem()
@@ -189,6 +185,10 @@ for i in range(len(res3_hum)):
 print("-----3 Day-----")
 print("Temp: ", item3, len(item3))
 print("Hum: ", itemH, len(itemH), '\n')
+
+print("-----10 Day-----")
+print("Max: ", item[1][1:], len(item[1])) # From the 3rd day
+print("Min: ", item[0][1:], len(item[0]), '\n')
 
 
 # In[5]:
