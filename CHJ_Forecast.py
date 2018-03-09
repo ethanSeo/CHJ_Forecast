@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[119]:
+# In[1]:
 
 import requests
 import re
@@ -10,7 +10,7 @@ import json
 import numpy as np
 
 
-# In[120]:
+# In[2]:
 
 # 10-Days Temperature Forecast
 weather10 = "https://api2.sktelecom.com/weather/forecast/6days?ver=1&lat=36.5038&lon=127.4166&appKey=84ccae67-8c6b-4269-8b4d-9131c5eae607"
@@ -52,7 +52,7 @@ for i in range(len(r)):
         item[p].insert(j, temp)
 
 
-# In[121]:
+# In[3]:
 
 # 3-Days Temperature Forecast
 weather3 = "https://api2.sktelecom.com/weather/forecast/3days?ver=1&lat=36.5038&lon=127.4166&appKey=84ccae67-8c6b-4269-8b4d-9131c5eae607"
@@ -63,7 +63,7 @@ res3_pre = response3["weather"]["forecast3days"][0]["fcst3hour"]["precipitation"
 time = response3["weather"]["forecast3days"][0]["timeRelease"]
 
 
-# In[122]:
+# In[4]:
 
 item3=[] #Temperature List
 ind3=[] #INDEX List
@@ -126,7 +126,7 @@ for i in range(len(res3_hum)):
     if it[1] is not '':
         hum = float(it[1])
         # if the INDEX List is empty, just append the hour&temp to the correct list
-        if len(indP) is 0:
+        if len(indH) is 0:
             indH.append(hour)
             itemH.append(hum)
             # don't increment count here. 
@@ -136,7 +136,7 @@ for i in range(len(res3_hum)):
             # this sorts everything, even if the returned json is unsorted
             while j<len(indH) and hour > indH[j]:
                 j+=1
-            # insert the hour/temp value at the right position
+            # insert the hour/temp value at the right position            
             indH.insert(j, hour)
             itemH.insert(j, hum)
             countH+=1 #start incrementing count from here.
@@ -181,26 +181,7 @@ for i in range(len(res3_pre)):
         continue
 
 
-# In[123]:
-
-# For keeping track of the dates and week-days/ends
-import datetime as dt
-recordedTime = int(time[11:13])
-mark=[6, 18, 6+24, 18+24, 6+48, 18+48]
-start=0
-for i in range(6):
-    mark[i]-=recordedTime
-    if mark[i] < 0:
-        start+=1
-
-if start is 1:
-    mark = mark[1:]
-    mark.insert(0, 0)
-elif start is 2:
-    mark = mark[2:]
-
-
-# In[124]:
+# In[5]:
 
 # Current Temperature
 minutely = "https://api2.sktelecom.com/weather/current/minutely?ver=1&lat=36.5038&lon=127.4166&appKey=84ccae67-8c6b-4269-8b4d-9131c5eae607"
@@ -214,7 +195,7 @@ res_hourly = requests.get(hourly).json()
 NOW_Hum = float(res_hourly["weather"]["hourly"][0]["humidity"])
 
 
-# In[125]:
+# In[6]:
 
 print("-----NOW-----")
 print("NOW_TEMP: ", NOW_Temp, '\u2103')
@@ -229,7 +210,7 @@ print("Max: ", item[1][1:], len(item[1])) # From the 3rd day
 print("Min: ", item[0][1:], len(item[0]), '\n')
 
 
-# In[126]:
+# In[19]:
 
 # Draw Graph
 import matplotlib.pyplot as plt
@@ -246,7 +227,7 @@ top = max(highest, NOW_Temp)
 T_range = highest+abs(lowest)
 
 
-plt.plot(ind3, item3, "#617bfb", label='3 Day Minimum: ({0}\u2103)'.format(lowest), linewidth=3)
+plt.plot(ind3, item3, "#617bfb", label='3 Day Minimum: ({0}\u2103)'.format(lowest), linewidth=3, solid_capstyle='round')
 plt.legend(shadow=True)
 plt.xlabel("# of Hours Passed", fontsize='large', fontweight='bold')
 plt.ylabel("Temperature(\u2103)", fontsize='large', fontweight='bold', color='#617bfb')
@@ -254,15 +235,32 @@ plt.xlim(-6, ind3[count]) # x-axis min/max limits
 plt.xticks(np.arange(0, ind3[count]+6, 6), fontsize='large')
 plt.ylim(bottom - T_range*0.2, top*1.1)
 plt.yticks(fontsize='large', color='#617bfb')
-plt.grid(linestyle='--')
+plt.grid(linestyle='--', linewidth=0.5)
 
 # Annotate "NOW"
 plt.plot(0, NOW_Temp, 'o', color='#617bfb')
 plt.text(-3, NOW_Temp, "NOW\n{0}".format(NOW_Time[11:16]), color='#ff4253', fontweight='bold', va='center', ha='center')
 
-# Mark area 6:00 - 18:00 for every date presented on the graph.
-today = dt.date.today()
-markingdays = int(len(mark))
+# For keeping track of the dates and week-days/ends
+import datetime as dt
+recordedTime = int(time[11:13])
+mark=[6, 18, 6+24, 18+24, 6+48, 18+48]
+start=0
+for i in range(6):
+    mark[i]-=recordedTime
+    if mark[i] < 0:
+        start+=1
+
+if start is 1:
+    mark = mark[1:]
+    mark.insert(0, 0)
+elif start is 2:
+    mark = mark[2:]
+    
+# Highlight area 6:00 - 18:00 for every date presented on the graph.
+# today = dt.date.today()
+today = dt.date(int(time[:4]), int(time[5:7]), int(time[8:10]))
+markingdays = int(len(mark)) # without the "int" keeps producing error;;
 addedDays=1 if markingdays is 4 else 0 # if the recorded time is 20:00 or beyond, must add 1 more day
 
 for i in range(0, markingdays, 2):
@@ -273,7 +271,7 @@ for i in range(0, markingdays, 2):
   
     plt.axvspan(mark[i], mark[i+1], facecolor=dayColor, alpha=0.2) #
     DATE = str(Day)[5:]
-    # x-pos, y-pos, Date in string, other parameters...
+    # x-pos, y-pos, Date in string form, other parameters...
     plt.text((mark[i]+mark[i+1])/2, bottom-T_range*0.05, DATE, horizontalalignment='center', fontweight='bold', color=dayColor)
 
     
@@ -289,11 +287,13 @@ for i in range(countP):
 
 
 # Right-Y axis (Humidity)
-humX = plt.twinx()
+humX = plt.twinx() # share the x-axis, creating a separate y-axis on the right side
 humX.plot(indH, itemH, 'o', label='Humidity', color='teal')
 humX.plot(0, NOW_Hum, 'o', color='teal')
 humX.set_ylabel("Humidity(%)", fontsize='large', fontweight='bold', color='teal')
 humX.tick_params(axis='y', colors='teal', direction='out', length=13, width=3)
+# for i in range(4):
+#     humX.axhline((i+1)*20, 0, 60, alpha=95, color='teal', linewidth=0.5)
 humX.set_ylim(0, 100)
 
 
@@ -310,8 +310,8 @@ for i in range(8):
     tenDay.append(str(today+dt.timedelta(deltaT+i))[5:])
 
 
-plt.plot(tenDay, item[1][1:], '#f86586', label='Temp Max({0}\u2103)'.format(maximum), linewidth=3)
-plt.plot(tenDay, item[0][1:], "#617bfb", label='Temp Min({0}\u2103)'.format(minimum), linewidth=3)
+plt.plot(tenDay, item[1][1:], '#f86586', label='Temp Max({0}\u2103)'.format(maximum), linewidth=3, solid_capstyle='round')
+plt.plot(tenDay, item[0][1:], "#617bfb", label='Temp Min({0}\u2103)'.format(minimum), linewidth=3, solid_capstyle='round')
 plt.legend(shadow=True)
 plt.xlabel("Date", fontsize='large', fontweight='bold')
 plt.ylabel("Temperature(\u2103)", fontsize='large', fontweight='bold')
@@ -326,7 +326,7 @@ plt.tight_layout(pad=4, w_pad=1, h_pad=2)
 # plt.show()
 
 
-# In[127]:
+# In[20]:
 
 plt.savefig('Forecast_{0}_{1}.png'.format(time[0:10], time[11:13]), dpi=100)
 plt.show()
